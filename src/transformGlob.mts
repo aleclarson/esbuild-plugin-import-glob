@@ -3,10 +3,10 @@ import { transformAsync, ParserOptions, types, ConfigAPI, PluginObj } from '@bab
 import { Message } from 'esbuild';
 import { OnTransformResult } from 'esbuild-rna';
 import glob, { type FileSystemAdapter } from 'fast-glob';
-import { CodeError } from './CodeError';
-import { extractGlobArguments } from './extractGlobArguments';
-import { normalizeFiles } from './normalizeFiles';
-import { replaceImportGlobNode } from './replaceImportGlobNode';
+import { CodeError } from './CodeError.mjs';
+import { extractGlobArguments } from './extractGlobArguments.mjs';
+import { normalizeFiles } from './normalizeFiles.mjs';
+import { replaceImportGlobNode } from './replaceImportGlobNode.mjs';
 
 export type TransformConfig = {
 	path: string;

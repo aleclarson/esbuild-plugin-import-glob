@@ -1,5 +1,5 @@
 import { useRna, Build } from 'esbuild-rna';
-import { TransformConfig, transformGlob } from './transformGlob';
+import { TransformConfig, transformGlob } from './transformGlob.mjs';
 import type { Plugin } from 'esbuild';
 
 export type PluginOptions = {

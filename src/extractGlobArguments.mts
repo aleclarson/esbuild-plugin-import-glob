@@ -1,6 +1,6 @@
 import { NodePath, Node, types } from '@babel/core';
-import { CodeError } from './CodeError';
-import { ImportGlobOptions, isImportGlobOptions } from './ImportGlobOptions';
+import { CodeError } from './CodeError.mjs';
+import { ImportGlobOptions, isImportGlobOptions } from './ImportGlobOptions.mjs';
 
 const evaluateConfidently = (nodePath: NodePath<Node>, argumentName: string): unknown => {
 	const evaluation = nodePath.evaluate();

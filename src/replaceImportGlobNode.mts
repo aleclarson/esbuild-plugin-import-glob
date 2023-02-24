@@ -1,5 +1,5 @@
 import { NodePath, types } from '@babel/core';
-import { ImportGlobOptions } from './ImportGlobOptions';
+import { ImportGlobOptions } from './ImportGlobOptions.mjs';
 
 const createEagerIdentifier = (globIndex: number, pathIndex: number) =>
 	types.identifier(`__glob_${globIndex}_${pathIndex}`);
