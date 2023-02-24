@@ -1,6 +1,6 @@
 {
 	"name": "@alloc/esbuild-plugin-import-glob",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "ESBuild plugin to support import.meta.glob imports",
 	"type": "module",
 	"main": "./dist/index.js",
