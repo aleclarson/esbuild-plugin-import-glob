@@ -8164,3 +8164,5 @@ packages:
       property-expr: 2.0.5
       toposort: 2.0.2
     dev: true
+
+publishDirectory: prepublish
