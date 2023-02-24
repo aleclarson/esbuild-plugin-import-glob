@@ -4,12 +4,11 @@
 	"packageManager": "pnpm",
 	"files": [
 		"src",
-		"aqu.config.ts",
-        ".gitignore",
+		".gitignore",
 		"tsconfig.json",
-        "tsconfig.test.json",
-        ".changeset",
-        "coverage",
-        "tests"
+		"tsconfig.test.json",
+		".changeset",
+		"coverage",
+		"tests"
 	]
 }

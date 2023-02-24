@@ -1,6 +1,6 @@
-import { readFile } from 'fs/promises';
+import { useRna, Build } from 'esbuild-rna';
 import { TransformConfig, transformGlob } from './transformGlob';
-import type { Loader, Plugin, PluginBuild } from 'esbuild';
+import type { Plugin } from 'esbuild';
 
 export type PluginOptions = {
 	jsFileRe: RegExp;
@@ -16,39 +16,28 @@ const defaultPluginOptions: PluginOptions = {
 	jsxFileRe: /\.jsx$/,
 };
 
-const setBuilderLoader = (
-	build: PluginBuild,
-	filter: RegExp,
-	loader: Loader,
-	config: Omit<TransformConfig, 'path'>,
-) => {
-	build.onLoad({ filter }, async (parameters) => {
-		const contentBuffer = await readFile(parameters.path);
-		const content = contentBuffer.toString();
-
-		const output = await transformGlob(content, {
+const addGlobTransformer = (build: Build, filter: RegExp, config: Omit<TransformConfig, 'path'>) => {
+	build.onTransform({ filter }, async (parameters) => {
+		return transformGlob(parameters.code, {
 			...config,
 			path: parameters.path,
 		});
-
-		return {
-			...output,
-			loader,
-		};
 	});
 };
 
-const createPlugin = (options?: Partial<PluginOptions>): Plugin => {
+const createPlugin = (options?: Partial<PluginOptions>) => {
 	const { jsFileRe, jsxFileRe, tsFileRe, tsxFileRe } = Object.assign(options ?? {}, defaultPluginOptions);
-	return {
+	const plugin: Plugin = {
 		name: 'esbuild-plugin-import-glob',
 		setup(build) {
-			setBuilderLoader(build, jsFileRe, 'js', { ts: false, jsx: false });
-			setBuilderLoader(build, jsxFileRe, 'jsx', { ts: false, jsx: true });
-			setBuilderLoader(build, tsFileRe, 'ts', { ts: true, jsx: false });
-			setBuilderLoader(build, tsxFileRe, 'tsx', { ts: true, jsx: true });
+			const rna = useRna(plugin, build);
+			addGlobTransformer(rna, jsFileRe, { ts: false, jsx: false });
+			addGlobTransformer(rna, jsxFileRe, { ts: false, jsx: true });
+			addGlobTransformer(rna, tsFileRe, { ts: true, jsx: false });
+			addGlobTransformer(rna, tsxFileRe, { ts: true, jsx: true });
 		},
 	};
+	return plugin;
 };
 
 export default createPlugin;

@@ -1,6 +1,7 @@
 import { dirname } from 'path';
 import { transformAsync, ParserOptions, types, ConfigAPI, PluginObj } from '@babel/core';
-import { OnLoadResult } from 'esbuild';
+import { Message } from 'esbuild';
+import { OnTransformResult } from 'esbuild-rna';
 import glob, { type FileSystemAdapter } from 'fast-glob';
 import { CodeError } from './CodeError';
 import { extractGlobArguments } from './extractGlobArguments';
@@ -54,11 +55,9 @@ function babelPluginGlobTransformation(api: ConfigAPI): PluginObj<BabelPluginSta
 
 const getLine = (source: string, line: number) => source.split('\n')[line - 1];
 
-export const transformGlob = async (source: string, config: TransformConfig): Promise<OnLoadResult> => {
-	if (!/import\.meta\.glob\(/.test(source)) {
-		return {
-			contents: source,
-		};
+export const transformGlob = async (code: string, config: TransformConfig): Promise<OnTransformResult | undefined> => {
+	if (!/import\.meta\.glob\(/.test(code)) {
+		return;
 	}
 
 	const plugins: ParserOptions['plugins'] = [];
@@ -72,7 +71,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 	}
 
 	try {
-		const babelOutput = await transformAsync(source, {
+		const babelOutput = await transformAsync(code, {
 			parserOpts: {
 				sourceType: 'module',
 				plugins,
@@ -85,7 +84,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 		}
 
 		return {
-			contents: babelOutput.code,
+			code: babelOutput.code,
 		};
 	} catch (error) {
 		if (error instanceof CodeError && error.nodePath.node.loc) {
@@ -96,7 +95,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 						location: {
 							column: location.start.column,
 							line: location.start.line,
-							lineText: getLine(source, location.start.line),
+							lineText: getLine(code, location.start.line),
 							file: config.path,
 							length:
 								location.end.line === location.start.line
@@ -105,7 +104,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 						},
 						text: error.message,
 					},
-				],
+				] as Message[],
 			};
 		}
 
@@ -115,7 +114,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 					{
 						text: error.message,
 					},
-				],
+				] as Message[],
 			};
 		}
 
@@ -124,7 +123,7 @@ export const transformGlob = async (source: string, config: TransformConfig): Pr
 				{
 					text: 'Unknown error occurred.',
 				},
-			],
+			] as Message[],
 		};
 	}
 };
