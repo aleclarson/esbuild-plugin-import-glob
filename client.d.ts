@@ -11,5 +11,5 @@ interface ImportGlobFunction {
 	<TEager extends boolean = false>(
 		pattern: string | string[],
 		options?: ImportGlobOptions<TEager>,
-	): TEager extends true ? Record<string, unknown> : Record<string, () => Promise<unknown>>;
+	): TEager extends true ? Record<string, unknown> : Record<string, () => Promise<any>>;
 }
